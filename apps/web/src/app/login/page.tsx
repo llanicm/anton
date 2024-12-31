@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -28,7 +28,7 @@ const formSchema = z.object({
   }),
 })
 
-export default function LoginPage() {
+const LoginPage = () => {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -53,7 +53,11 @@ export default function LoginPage() {
 
       router.push('/')
     } catch (error) {
-      setError(error.message)
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unknown error occurred')
+      }
     }
   }
 
@@ -100,7 +104,7 @@ export default function LoginPage() {
             </form>
           </Form>
           <p className="mt-4 text-center">
-            Don't have an account? <Link href="/register" className="text-blue-500 hover:underline">Register</Link>
+            Don&apos;t have an account? <Link href="/register" className="text-blue-500 hover:underline">Register</Link>
           </p>
         </CardContent>
       </Card>
@@ -108,3 +112,10 @@ export default function LoginPage() {
   )
 }
 
+const SuspenseWrapper = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPage />
+    </Suspense>
+);
+
+export default SuspenseWrapper;

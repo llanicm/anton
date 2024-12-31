@@ -51,7 +51,11 @@ export default function RegisterPage() {
 
       router.push('/login?registered=true')
     } catch (error) {
-      setError(error.message)
+        if (error instanceof Error) {
+            setError(error.message)
+        } else {
+            setError('An unknown error occurred')
+        }
     }
   }
 
